@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { MUSICA, RECUERDOS } from '../../src/config/contenido.js';
 
 const DURACION_ENTRADA = 9_000; // la secuencia completa dura ~6,5 s
 
@@ -46,13 +47,62 @@ test.describe('universo de flores amarillas', () => {
     await page.keyboard.press('Enter');
 
     const dialogo = page.locator('#tarjeta');
-    await expect(dialogo).toBeVisible();
+    // La tarjeta no sale de golpe: primero la camara se acerca al orbe.
+    await expect(dialogo).toBeVisible({ timeout: 10_000 });
     // El texto se escribe letra por letra: se espera a que se complete.
-    await expect(page.locator('#tarjeta-mensaje')).toHaveText(/oro/, { timeout: 15_000 });
+    await expect(page.locator('#tarjeta-mensaje')).toHaveText(RECUERDOS[0].mensaje, {
+      timeout: 20_000,
+    });
     await expect(page.locator('#tarjeta-imagen')).toHaveJSProperty('complete', true);
 
     await page.locator('#tarjeta-cerrar').click();
     await expect(dialogo).toBeHidden();
+  });
+
+  test('al abrir un recuerdo la camara se acerca y luego vuelve', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#intro-boton').click();
+    await expect(page.locator('#titulo')).toHaveClass(/visible/, { timeout: DURACION_ENTRADA });
+
+    const lejos = await page.evaluate(() => window.__camara.distancia);
+
+    await page.locator('#recuerdos-accesibles button').nth(2).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#tarjeta')).toBeVisible({ timeout: 10_000 });
+
+    const cerca = await page.evaluate(() => window.__camara.distancia);
+    expect(cerca).toBeLessThan(lejos / 2);
+
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#tarjeta')).toBeHidden();
+    await page.waitForTimeout(2_500);
+
+    const devuelta = await page.evaluate(() => window.__camara.distancia);
+    expect(Math.abs(devuelta - lejos)).toBeLessThan(lejos * 0.15);
+  });
+
+  test('la musica arranca sola y se puede pausar', async ({ page }) => {
+    test.skip(MUSICA.length === 0, 'No hay canciones configuradas');
+
+    await page.goto('/');
+    const descargas = [];
+    page.on('request', (peticion) => {
+      if (peticion.url().includes('/musica/')) descargas.push(peticion.url());
+    });
+
+    await page.locator('#intro-boton').click();
+    await expect(page.locator('#titulo')).toHaveClass(/visible/, { timeout: DURACION_ENTRADA });
+
+    const mando = page.locator('#musica');
+    await expect(mando).toBeVisible();
+    await expect(mando).toHaveClass(/musica--sonando/, { timeout: 10_000 });
+    await expect(page.locator('#musica-titulo')).not.toBeEmpty();
+
+    // Solo debe descargarse la cancion que suena, no las siete.
+    expect(descargas.length).toBeLessThanOrEqual(2);
+
+    await page.locator('#musica-alternar').click();
+    await expect(mando).not.toHaveClass(/musica--sonando/);
   });
 
   test('se puede cerrar la tarjeta con la tecla Escape', async ({ page }) => {

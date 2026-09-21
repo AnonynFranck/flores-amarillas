@@ -5,7 +5,7 @@
  * la entrada cinematografica y la interaccion con el puntero y el teclado.
  */
 import { Clock, Raycaster, Scene, Vector2 } from 'three';
-import { FRASES, INTRO, PERSONA, RECUERDOS } from './config/contenido.js';
+import { FLORES, FRASES, INTRO, MUSICA, PERSONA, RECUERDOS } from './config/contenido.js';
 import { detectarCalidad, prefiereMenosMovimiento, soportaWebGL } from './lib/preferencias.js';
 import { crearRenderizador } from './escena/renderer.js';
 import { crearCamara } from './escena/camara.js';
@@ -23,11 +23,15 @@ import { crearCorazon } from './escena/corazon.js';
 import { crearEstrellas } from './escena/estrellas.js';
 import { crearWarp } from './escena/warp.js';
 import { crearEsferas } from './escena/esferas.js';
+import { crearFlores } from './escena/flores.js';
 import { crearFrases } from './escena/textos.js';
+import { crearEnfoque } from './escena/enfoque.js';
 import { aplicarEstadoCamara, crearEstadoEntrada, reproducirEntrada } from './escena/entrada.js';
 import { crearIntro } from './ui/intro.js';
 import { crearTarjeta } from './ui/tarjeta.js';
 import { crearInterfaz } from './ui/interfaz.js';
+import { crearReproductor } from './ui/musica.js';
+import { crearControlMusica } from './ui/controlMusica.js';
 import { recurso } from './lib/rutas.js';
 
 const DISTANCIA_CLIC = 9; // px: mas que esto ya es un arrastre, no un clic
@@ -66,7 +70,9 @@ function iniciar() {
     },
   });
 
-  escena.add(galaxia.grupo, corazon.grupo, estrellas.objeto, esferas.grupo);
+  const flores = crearFlores(FLORES, { calidad });
+
+  escena.add(galaxia.grupo, corazon.grupo, estrellas.objeto, esferas.grupo, flores.grupo);
   // El tunel cuelga de la camara para que siempre envuelva la vista.
   camara.add(warp.objeto);
   escena.add(camara);
@@ -86,11 +92,45 @@ function iniciar() {
   });
   gestorControles.establecerHabilitado(false);
 
-  const tarjeta = crearTarjeta({ reducido });
+  const enfoque = crearEnfoque({ camara, controles: gestorControles.controles, reducido });
+
+  const reproductor = crearReproductor(MUSICA, {
+    alCambiar: (estadoMusica) => control.actualizar(estadoMusica),
+  });
+  const control = crearControlMusica(reproductor);
+
+  const tarjeta = crearTarjeta({
+    reducido,
+    alCerrar: () => {
+      reproductor.agachar(false);
+      enfoque.alejar().then(() => {
+        gestorControles.establecerHabilitado(true);
+        gestorControles.establecerGiroAutomatico(!reducido);
+      });
+    },
+  });
+
+  // Indice por identificador: la lista accesible entrega un recuerdo, y para
+  // acercarse hace falta su orbe.
+  const orbePorId = new Map(esferas.sprites.map((sprite) => [sprite.userData.recuerdo.id, sprite]));
+
+  /**
+   * Abre un recuerdo: primero la camara se acerca a su orbita y luego, ya
+   * encima, aparece la tarjeta. El acercamiento es el que da la sensacion de
+   * entrar en ese momento concreto.
+   */
+  function abrirRecuerdo(recuerdo) {
+    const sprite = orbePorId.get(recuerdo.id);
+    reproductor.agachar(true);
+    gestorControles.establecerHabilitado(false);
+    gestorControles.establecerGiroAutomatico(false);
+    enfoque.acercar(sprite).then(() => tarjeta.abrir(recuerdo));
+  }
+
   const interfaz = crearInterfaz({
     persona: PERSONA,
     recuerdos: RECUERDOS,
-    alElegirRecuerdo: (recuerdo) => tarjeta.abrir(recuerdo),
+    alElegirRecuerdo: abrirRecuerdo,
   });
   const intro = crearIntro();
 
@@ -105,6 +145,7 @@ function iniciar() {
    */
   function aplicarEscalaLegible() {
     esferas.establecerEscalaBase(escalaDeFotos(camara));
+    flores.establecerEscala(escalaDeFotos(camara));
     frases?.establecerEscala(escalaDeLegibilidad(camara));
   }
 
@@ -155,7 +196,7 @@ function iniciar() {
 
     actualizarPuntero(evento);
     const objetivo = esferaBajoPuntero();
-    if (objetivo) tarjeta.abrir(objetivo.userData.recuerdo);
+    if (objetivo) abrirRecuerdo(objetivo.userData.recuerdo);
   });
 
   // El menu contextual estorba al girar con el boton derecho.
@@ -259,9 +300,14 @@ function iniciar() {
     const delta = Math.min(reloj.getDelta(), 0.05);
     tiempo += delta;
 
+    // Los orbes se mueven antes que la camara: al acercarse a uno, la camara
+    // lo sigue usando su posicion de este cuadro, no la del anterior.
+    esferas.actualizar(tiempo, delta);
+    esferas.establecerAparicion(estado.esferas);
+
     if (!entradaTerminada) {
       aplicarEstadoCamara(camara, estado);
-    } else {
+    } else if (!enfoque.aplicar()) {
       gestorControles.actualizar();
     }
 
@@ -272,8 +318,8 @@ function iniciar() {
     estrellas.actualizar(tiempo);
     estrellas.establecerIntensidad(estado.estrellas);
     warp.actualizar(delta, estado.velocidadWarp);
-    esferas.actualizar(tiempo, delta);
-    esferas.establecerAparicion(estado.esferas);
+    flores.actualizar(tiempo);
+    flores.establecerAparicion(estado.esferas);
     if (frases) {
       frases.establecerAparicion(estado.frases);
       frases.actualizar(tiempo, camara);
@@ -322,6 +368,8 @@ function iniciar() {
         gestorControles.establecerGiroAutomatico(!reducido);
         lienzo.style.cursor = 'grab';
         interfaz.revelar();
+        control.mostrar();
+        reproductor.iniciar();
       },
     });
   });

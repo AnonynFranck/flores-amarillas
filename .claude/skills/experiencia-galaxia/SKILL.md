@@ -34,7 +34,10 @@ los errores que ya se cometieron una vez, para no repetirlos.
 | Encuadre y distancia de cámara     | `escena/encuadre.js`    | `ocupacionDeseada`, `RADIO_ESCENA`, elevaciones     |
 | Coreografía de entrada             | `escena/entrada.js`     | tiempos de la línea GSAP                            |
 | Corazón                            | `escena/corazon.js`     | `escala`, `altura`, `uFlujo`                        |
-| Órbitas de las fotos               | `config/contenido.js`   | `radio`, `altura`, `fase`, `velocidad`              |
+| Órbitas de las fotos               | `lib/orbitas.js`        | tabla `ANILLOS`, `VARIACION_ALTURA`                 |
+| Acercamiento al tocar una foto     | `escena/enfoque.js`     | `DISTANCIA_CERCA`, `ELEVACION_CERCA`, `duracion`    |
+| Girasoles flotantes                | `escena/flores.js`      | `CANTIDADES`, rangos de escala y opacidad           |
+| Música                             | `ui/musica.js`          | `VOLUMEN`, `CRUCE`, atenuación al leer              |
 
 ## Trampas conocidas
 
@@ -82,6 +85,25 @@ Por eso la esfera envolvente que calcula three no sirve y los `Points` llevan
 `smoothstep(0.0, -26.0, z)` es comportamiento indefinido en GLSL. Usa la
 profundidad positiva: `smoothstep(0.0, 26.0, -z)`.
 
+### 7. El lienzo WebGL no se puede leer desde fuera del cuadro
+
+Sin `preserveDrawingBuffer` (que está desactivado, por rendimiento), hacer
+`drawImage` del lienzo desde una prueba devuelve un búfer vacío. Por eso existe
+`window.__camara.brilloDelLienzo()`, que toma la muestra dentro del bucle de
+dibujo, justo después de pintar.
+
+### 8. Un SVG con `<rect>` de fondo no sirve como sprite suelto
+
+Los girasoles flotantes usan `public/imagenes/flores/*.svg`, que se generan sin
+fondo. Las flores de `public/imagenes/*.svg` sí lo llevan (son marcadores de
+posición para las fotos) y, usadas como sprites, se ven como tarjetas blancas.
+
+### 9. Un material compartido comparte también la opacidad
+
+En `flores.js` se comparte la textura entre las flores pero cada una tiene su
+material. Compartir el material obliga a que todas tengan la misma opacidad, y
+ahí se pierde la sensación de profundidad.
+
 ## Al cambiar el encuadre
 
 La cámara no tiene una posición fija: `escena/encuadre.js` calcula a qué
@@ -117,9 +139,9 @@ debe aparecer durante el viaje, dale su tramo en la línea de tiempo de
 ## Comprobaciones antes de dar algo por terminado
 
 ```bash
-npm test          # incluye que las imágenes de contenido.js existan
+npm test          # incluye que fotos y canciones de contenido.js existan
 npm run build
-npm run test:e2e  # portada, viaje, tarjeta, teclado y giro con botón derecho
+npm run test:e2e  # portada, viaje, acercamiento, tarjeta, música y teclado
 ```
 
 Y mira la escena en 1280×800 y en 390×844 antes de cerrar.

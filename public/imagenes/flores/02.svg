@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="Girasol">
+  <defs>
+    <linearGradient id="petalo1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe27a"/>
+      <stop offset="100%" stop-color="#e69512"/>
+    </linearGradient>
+    <radialGradient id="nucleo1" cx="42%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#7a4d0c"/>
+      <stop offset="100%" stop-color="#3d2404"/>
+    </radialGradient>
+    <radialGradient id="halo1" cx="50%" cy="50%" r="50%">
+      <stop offset="55%" stop-color="#ffe27a" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#ffe27a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="200" cy="200" r="200" fill="url(#halo1)"/>
+  <g>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(17 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(49.72727272727273 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(82.45454545454545 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(115.18181818181819 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(147.9090909090909 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(180.63636363636363 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(213.36363636363637 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(246.0909090909091 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(278.8181818181818 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(311.54545454545456 200 200)"/>
+    <ellipse cx="200" cy="108" rx="23.200000000000003" ry="64" fill="url(#petalo1)" transform="rotate(344.27272727272725 200 200)"/>
+  </g>
+  <circle cx="200" cy="200" r="28.799999999999997" fill="url(#nucleo1)"/>
+</svg>

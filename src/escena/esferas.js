@@ -9,17 +9,34 @@
 import { Group, ImageLoader, Sprite, SpriteMaterial } from 'three';
 import { texturaAvatar } from '../lib/texturas.js';
 import { recurso } from '../lib/rutas.js';
+import { distribuirOrbitas } from '../lib/orbitas.js';
 
+/**
+ * Tamano de referencia de un orbe. Con muchas fotos conviene encogerlas para
+ * que la galaxia siga leyendose como un conjunto y no como un mural.
+ */
 const ESCALA_BASE = 2.5;
+const ESCALA_MINIMA = 1.75;
 /** Cuanto crece una esfera al pasar el puntero por encima. */
 const RESALTE = 1.18;
+
+function escalaSegunCantidad(cantidad) {
+  if (cantidad <= 8) return ESCALA_BASE;
+  const reducida = ESCALA_BASE * Math.sqrt(8 / cantidad);
+  return Math.max(ESCALA_MINIMA, reducida);
+}
 
 export function crearEsferas(recuerdos, { alDetectarFallo } = {}) {
   const grupo = new Group();
   grupo.name = 'esferas';
 
+  const orbitas = distribuirOrbitas(recuerdos.length);
+  const escalaInicial = escalaSegunCantidad(recuerdos.length);
+
   const cargador = new ImageLoader();
-  const sprites = recuerdos.map((recuerdo) => {
+  const sprites = recuerdos.map((recuerdo, indice) => {
+    // La orbita se reparte sola, pero el contenido puede sobrescribirla.
+    const orbita = { ...orbitas[indice], ...recuerdo };
     const material = new SpriteMaterial({
       map: texturaAvatar(null),
       transparent: true,
@@ -31,12 +48,13 @@ export function crearEsferas(recuerdos, { alDetectarFallo } = {}) {
     });
 
     const sprite = new Sprite(material);
-    sprite.scale.setScalar(ESCALA_BASE);
+    sprite.scale.setScalar(escalaInicial);
     sprite.userData = {
       recuerdo,
-      escalaBase: ESCALA_BASE,
-      escalaObjetivo: ESCALA_BASE,
-      escalaActual: ESCALA_BASE,
+      orbita,
+      escalaBase: escalaInicial,
+      escalaObjetivo: escalaInicial,
+      escalaActual: escalaInicial,
       resaltado: false,
     };
     grupo.add(sprite);
@@ -62,12 +80,12 @@ export function crearEsferas(recuerdos, { alDetectarFallo } = {}) {
     sprites,
     actualizar(tiempo, delta) {
       sprites.forEach((sprite) => {
-        const { recuerdo } = sprite.userData;
-        const angulo = recuerdo.fase + tiempo * recuerdo.velocidad;
+        const { orbita } = sprite.userData;
+        const angulo = orbita.fase + tiempo * orbita.velocidad;
         sprite.position.set(
-          Math.cos(angulo) * recuerdo.radio,
-          recuerdo.altura + Math.sin(tiempo * 0.55 + recuerdo.fase) * 0.34,
-          Math.sin(angulo) * recuerdo.radio
+          Math.cos(angulo) * orbita.radio,
+          orbita.altura + Math.sin(tiempo * 0.55 + orbita.fase) * 0.34,
+          Math.sin(angulo) * orbita.radio
         );
 
         // Suavizado del resaltado, independiente de los FPS.
@@ -81,7 +99,7 @@ export function crearEsferas(recuerdos, { alDetectarFallo } = {}) {
     establecerEscalaBase(factor) {
       sprites.forEach((sprite) => {
         const datos = sprite.userData;
-        datos.escalaBase = ESCALA_BASE * factor;
+        datos.escalaBase = escalaInicial * factor;
         datos.escalaObjetivo = datos.escalaBase * (datos.resaltado ? RESALTE : 1);
       });
     },

@@ -9,3 +9,6 @@ blob-report/
 .DS_Store
 .env
 .env.*
+
+# Originales sin comprimir: pesan mucho y de ellos salen los de public/
+medios-originales/

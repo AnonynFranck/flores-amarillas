@@ -39,6 +39,21 @@
     <div id="vineta" class="vineta" aria-hidden="true"></div>
     <div id="destello" class="destello" aria-hidden="true"></div>
 
+    <div id="musica" class="musica" hidden>
+      <button id="musica-alternar" class="musica__boton" type="button" aria-label="Poner la música">
+        <span class="musica__ondas" aria-hidden="true"> <i></i><i></i><i></i><i></i> </span>
+      </button>
+      <p id="musica-titulo" class="musica__titulo"></p>
+      <button
+        id="musica-siguiente"
+        class="musica__siguiente"
+        type="button"
+        aria-label="Siguiente canción"
+      >
+        Siguiente
+      </button>
+    </div>
+
     <main class="escenario">
       <h1 id="titulo" class="titulo">Feliz día de las flores amarillas, Nathaly</h1>
       <p id="pista" class="pista">Desliza para explorar el universo · Toca las esferas</p>
@@ -53,7 +68,7 @@
         <img
           id="intro-imagen"
           class="intro__imagen"
-          src="./imagenes/intro.svg"
+          src="./imagenes/orbes/05.jpg"
           alt=""
           width="320"
           height="320"
@@ -68,7 +83,15 @@
 
     <dialog id="tarjeta" class="tarjeta" aria-labelledby="tarjeta-titulo">
       <article class="tarjeta__marco">
-        <img id="tarjeta-imagen" class="tarjeta__imagen" src="" alt="" width="420" height="420" />
+        <img
+          id="tarjeta-imagen"
+          class="tarjeta__imagen"
+          src=""
+          alt=""
+          width="1100"
+          height="1100"
+          decoding="async"
+        />
         <h2 id="tarjeta-titulo" class="tarjeta__titulo"></h2>
         <p id="tarjeta-mensaje" class="tarjeta__mensaje" aria-hidden="true"></p>
         <p id="tarjeta-mensaje-accesible" class="visualmente-oculto"></p>

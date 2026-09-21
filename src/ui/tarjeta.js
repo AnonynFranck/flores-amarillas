@@ -61,7 +61,9 @@ export function crearTarjeta({ reducido = false, alCerrar } = {}) {
     abrir(recuerdo) {
       detenerMaquina();
 
-      imagen.src = recurso(recuerdo.imagen);
+      // La tarjeta muestra la foto entera; el recorte cuadrado es solo para
+      // la textura del orbe.
+      imagen.src = recurso(recuerdo.foto ?? recuerdo.imagen);
       imagen.alt = recuerdo.titulo ?? '';
       titulo.textContent = recuerdo.titulo ?? '';
       mensaje.textContent = '';

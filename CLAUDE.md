@@ -12,7 +12,15 @@ npm run build      # produce dist/
 npm test           # Vitest (unitarias)
 npm run test:e2e   # Playwright (usa el Chrome del sistema)
 npm run format     # Prettier — el CI ejecuta format:check
+npm run medios     # prepara fotos y música desde medios-originales/
 ```
+
+## Medios
+
+Los originales viven en `medios-originales/` (fuera de git) y `npm run medios`
+genera las versiones publicables en `public/`. Nunca edites a mano lo que hay en
+`public/imagenes/orbes`, `public/imagenes/fotos` ni `public/musica`: se
+regeneran.
 
 ## Convenciones
 
@@ -24,7 +32,8 @@ npm run format     # Prettier — el CI ejecuta format:check
 - **No hay estado global.** `main.js` crea todo y lo conecta; los módulos no se
   conocen entre sí.
 - `src/config/contenido.js` es el único archivo pensado para editarse a mano
-  (fotos, mensajes, frases). Trátalo como datos, no como código.
+  (fotos, mensajes, frases, girasoles, canciones). Trátalo como datos, no como
+  código: la colocación en la escena se calcula, no se escribe ahí.
 - Sin `console.log` en el código de producción.
 
 ## Antes de dar por terminada una tarea

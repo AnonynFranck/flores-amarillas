@@ -104,8 +104,11 @@
   gap: var(--espacio-xs);
   width: min(82vw, 20rem);
   height: auto;
+  /* Con muchas fotos la lista no cabe en pantalla: se deja desplazable. */
+  max-height: min(72dvh, 34rem);
   padding: var(--espacio-s);
-  overflow: visible;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   clip-path: none;
   border-radius: var(--radio-m);
   border: 1px solid var(--borde-tenue);
@@ -285,13 +288,19 @@
   box-shadow: var(--sombra-tarjeta);
 }
 
+/**
+ * La foto se muestra entera, con su forma real. Recortarla a un cuadrado
+ * cortaba cabezas en las verticales; el limite de alto es lo que mantiene la
+ * tarjeta dentro de la pantalla.
+ */
 .tarjeta__imagen {
-  width: min(72%, 17rem);
+  width: auto;
+  max-width: 100%;
+  max-height: min(46dvh, 22rem);
   height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: var(--radio-m);
-  background: oklch(97% 0.01 90);
+  background: oklch(24% 0.02 60);
   box-shadow:
     0 0 0 1px var(--borde-oro),
     var(--brillo-oro);

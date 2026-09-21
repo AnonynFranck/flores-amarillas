@@ -13,17 +13,22 @@ publicar en GitHub Pages.
 
 ## Cómo se ve
 
-| Momento   | Qué pasa                                                                         |
-| --------- | -------------------------------------------------------------------------------- |
-| Portada   | Una tarjeta con la foto y el botón **Descubrir magia**                           |
-| Viaje     | La cámara atraviesa un túnel de estelas doradas y un fogonazo de luz             |
-| Galaxia   | Brazos espirales, anillos de polvo, corazón de partículas y estrellas de fondo   |
-| Recuerdos | Cada foto orbita; al tocarla se abre su tarjeta con el mensaje escrito a máquina |
+| Momento   | Qué pasa                                                                        |
+| --------- | ------------------------------------------------------------------------------- |
+| Portada   | Una tarjeta con la foto y el botón **Descubrir magia**                          |
+| Viaje     | La cámara atraviesa un túnel de estelas doradas y un fogonazo de luz            |
+| Galaxia   | Brazos espirales, anillos de polvo, corazón de partículas y girasoles flotando  |
+| Recuerdos | Al tocar una foto la cámara vuela hasta su órbita y ahí se abre su tarjeta      |
+| Música    | Las canciones suenan encadenadas y bajan de volumen mientras se lee un recuerdo |
 
 La galaxia **se desliza sola** al llegar. Se puede girar arrastrando con el
 botón izquierdo **o con el derecho**, acercar con la rueda y explorar con un
 dedo en el móvil. El giro automático se detiene mientras exploras y vuelve unos
 segundos después.
+
+Al tocar una foto la cámara se acerca a su órbita y **la sigue mientras lees**,
+porque la foto no deja de moverse; al cerrar la tarjeta vuelve exactamente a la
+vista que tenías.
 
 ---
 
@@ -42,38 +47,77 @@ npm run preview    # sirve dist/ en http://localhost:4173
 npm test           # pruebas unitarias (Vitest)
 npm run test:e2e   # pruebas end to end (Playwright)
 npm run format     # Prettier
+npm run medios     # prepara fotos y música desde medios-originales/
 npm run portada    # regenera la vista previa del enlace (public/portada.jpg)
 ```
 
 ---
 
-## Personalizar: fotos y mensajes
+## Personalizar: fotos, mensajes y música
 
 Todo lo editable vive en un único archivo: [`src/config/contenido.js`](src/config/contenido.js).
 
-### 1. Cambia las fotos
+### 1. Añade fotos o canciones
 
-Pon tus imágenes en `public/imagenes/` (cuadradas, idealmente 600×600 px, en
-`.jpg`, `.png`, `.webp` o `.svg`) y referencia el nombre del archivo:
+Deja los archivos tal cual (sí, con el nombre raro de WhatsApp) en:
+
+- `medios-originales/fotos/`
+- `medios-originales/musica/`
+
+Y ejecuta:
+
+```bash
+npm run medios
+```
+
+Eso genera, con nombres limpios y peso razonable:
+
+| Se genera                | Para qué                                  |
+| ------------------------ | ----------------------------------------- |
+| `public/imagenes/orbes/` | recorte cuadrado de 512 px para cada orbe |
+| `public/imagenes/fotos/` | la foto entera para la tarjeta            |
+| `public/musica/`         | la canción a 128 kbps                     |
+
+Las fotos se numeran por orden de captura, así que `01.jpg` es la más antigua.
+La carpeta `medios-originales/` no se sube al repositorio: es tu copia de
+seguridad local.
+
+### 2. Escribe los mensajes
 
 ```js
 export const RECUERDOS = [
   {
-    id: 'brillo', // identificador único
-    imagen: 'imagenes/nuestra-foto.jpg',
-    titulo: 'Tu brillo', // rótulo pequeño de la tarjeta
-    mensaje: 'Un amor tan brillante y puro como el oro',
-    radio: 6.2, // distancia al centro de la galaxia (6 a 13)
-    altura: 1.35, // altura sobre el disco (-3 a 3)
-    fase: 0.0, // posición inicial en la órbita (0 a 6.28)
-    velocidad: 0.085, // vueltas por segundo (0.04 a 0.09)
+    id: 'sonrisa', // identificador único
+    imagen: 'imagenes/orbes/05.jpg', // el orbe
+    foto: 'imagenes/fotos/05.jpg', // la tarjeta
+    titulo: 'Esa sonrisa', // rótulo pequeño
+    mensaje: 'Tu sonrisa me arregla cualquier día, siempre',
   },
   // ...
 ];
 ```
 
-Puedes tener entre 4 y 12 recuerdos. Si borras o añades uno, la lista accesible
-del teclado y las órbitas se ajustan solas.
+**No hace falta indicar la posición**: las órbitas se reparten solas en anillos
+concéntricos (ver [`src/lib/orbitas.js`](src/lib/orbitas.js)). Si quieres mover
+una foto en concreto, añádele `radio`, `altura`, `fase` o `velocidad` y mandará
+sobre el reparto automático.
+
+Puedes tener entre 4 y 40 recuerdos. Si borras o añades uno, las órbitas y la
+lista accesible del teclado se reajustan solas.
+
+### 3. La música
+
+```js
+export const MUSICA = [
+  { archivo: 'musica/te-quiero-amor.mp3', titulo: 'Te quiero amor' },
+  { archivo: 'musica/only.mp3', titulo: 'ONLY', artista: 'LeeHi' },
+];
+```
+
+Suenan **en orden distinto en cada visita** y todas antes de repetir ninguna, se
+funden unas con otras y bajan de volumen mientras se lee un recuerdo. Solo se
+descarga la que suena y la siguiente, así que abrir la página no cuesta treinta
+megas. El mando está arriba a la derecha: pausa y salto de canción.
 
 La foto de la portada se cambia en `INTRO.imagen`.
 
@@ -92,15 +136,15 @@ export const FRASES = ['Eres espectacular', 'Siempre contigo' /* ... */];
 Las `FRASES` son las que flotan por el universo: entre 10 y 16 funcionan bien, y
 conviene que sean cortas (máximo unos 45 caracteres).
 
-### 3. Comprueba que no se rompió nada
+### 4. Comprueba que no se rompió nada
 
 ```bash
 npm test
 ```
 
-Hay una prueba que verifica que **cada imagen referenciada existe de verdad** en
-`public/`, así que si te equivocas con un nombre de archivo te enterarás aquí y
-no cuando lo abra ella.
+Hay pruebas que verifican que **cada foto y cada canción referenciada existe de
+verdad** en `public/`, así que si te equivocas con un nombre de archivo te
+enterarás aquí y no cuando lo abra ella.
 
 ---
 
@@ -149,14 +193,18 @@ src/
 │   ├── estrellas.js        # campo de estrellas de fondo
 │   ├── warp.js             # túnel de luz de la entrada
 │   ├── esferas.js          # fotos en órbita
+│   ├── flores.js           # girasoles flotando
+│   ├── enfoque.js          # el acercamiento a un orbe
 │   ├── textos.js           # frases flotantes
 │   ├── entrada.js          # la coreografía del viaje (GSAP)
 │   ├── encuadre.js         # encuadre adaptado a cada pantalla
 │   ├── camara.js · controles.js · renderer.js · postproceso.js
 ├── ui/
 │   ├── intro.js · tarjeta.js · interfaz.js
+│   ├── musica.js           # encadenado, atenuación y descarga bajo demanda
+│   ├── controlMusica.js    # el mando de la esquina
 │   └── maquinaEscribir.js  # efecto de escritura (sin DOM, por eso es testeable)
-├── lib/                    # matemáticas, texturas, rutas y detección de equipo
+├── lib/                    # matemáticas, órbitas, lista de canciones, texturas
 └── estilos/                # tokens, base e interfaz
 ```
 
@@ -176,6 +224,12 @@ Decisiones que vale la pena conocer:
   para seguir siendo legibles y tocables.
 - **El viaje dura lo mismo en cualquier equipo.** Se desactiva el suavizado de
   retardo de GSAP para que la línea de tiempo avance con el reloj real.
+- **Las órbitas se calculan, no se escriben.** Con veintitantas fotos, colocarlas
+  a mano acaba en montones y huecos; se reparten en anillos con más fotos cuanto
+  mayor es el anillo.
+- **La música se descarga a cuentagotas.** Dos elementos de audio que se turnan:
+  mientras uno se apaga el otro se enciende, y la canción que ya sonó suelta su
+  descarga.
 
 ---
 
@@ -191,23 +245,29 @@ Decisiones que vale la pena conocer:
 
 ## Rendimiento
 
-| Recurso             | Tamaño (gzip)                                           |
-| ------------------- | ------------------------------------------------------- |
-| JS                  | ~170 kB (three.js y su post-proceso son la mayor parte) |
-| CSS                 | ~3 kB                                                   |
-| Imágenes de ejemplo | ~2 kB cada una (SVG)                                    |
+| Recurso          | Tamaño                                                   |
+| ---------------- | -------------------------------------------------------- |
+| JS               | ~175 kB gzip (three.js y su post-proceso son la mayoría) |
+| CSS              | ~4 kB gzip                                               |
+| Orbes (26 fotos) | ~1,1 MB en total, se cargan al entrar                    |
+| Fotos de tarjeta | ~110 kB cada una, solo al abrir su tarjeta               |
+| Música           | ~4 MB por canción, solo la que suena                     |
 
 Está por encima del presupuesto habitual de una página de aterrizaje porque es
-una escena 3D completa; a cambio no hay fuentes pesadas, ni vídeo, ni sprites.
-Si sustituyes las imágenes de ejemplo por fotos, comprímelas antes (WebP o AVIF,
-600×600 px es suficiente).
+una escena 3D completa con fotos y música; a cambio nada se descarga antes de
+hacer falta. `npm run medios` se encarga de la compresión, así que no hace falta
+preparar nada a mano.
 
-## Créditos
+## Créditos y música
 
-Las imágenes incluidas son flores generadas por
-[`scripts/generar-placeholders.mjs`](scripts/generar-placeholders.mjs); puedes
-regenerarlas con `node scripts/generar-placeholders.mjs`. Sustitúyelas por tus
-propias fotos.
+Los girasoles que flotan por la galaxia están dibujados por
+[`scripts/generar-placeholders.mjs`](scripts/generar-placeholders.mjs) y se
+regeneran con `npm run imagenes:ejemplo`.
+
+Las canciones son grabaciones comerciales de sus autores. En un sitio público
+las estás redistribuyendo, aunque sea un regalo personal: si prefieres evitarlo,
+puedes quitar `public/musica/` del repositorio (la experiencia funciona sin
+música: basta con dejar `MUSICA` vacío en `contenido.js`).
 
 ## Licencia
 
