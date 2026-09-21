@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-label="Flor amarilla">
+  <defs>
+    <radialGradient id="fondo3" cx="50%" cy="42%" r="72%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fdf7ea"/>
+    </radialGradient>
+    <linearGradient id="petalo3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe9a1"/>
+      <stop offset="100%" stop-color="#eda31c"/>
+    </linearGradient>
+    <radialGradient id="nucleo3" cx="42%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#8c5a10"/>
+      <stop offset="100%" stop-color="#4a2c05"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#fondo3)"/>
+  <g opacity="0.96">
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(39 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(79 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(119 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(159 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(199 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(239 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(279 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(319 300 300)"/>
+    <ellipse cx="300" cy="174" rx="51.00000000000001" ry="93" fill="url(#petalo3)" transform="rotate(359 300 300)"/>
+  </g>
+  <circle cx="300" cy="300" r="52.8" fill="url(#nucleo3)"/>
+  <path d="M 300 480
+           c 0 -30 45 -30 45 0
+           c 0 27 -45 51.00000000000001 -45 51.00000000000001
+           c 0 0 -45 -24 -45 -51.00000000000001
+           c 0 -30 45 -30 45 0 z"
+        fill="#eda31c" opacity="0.5"/>
+</svg>

@@ -1,0 +1,27 @@
+{
+  "name": "flores-amarillas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Universo interactivo de particulas doradas para el dia de las flores amarillas",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "format": "prettier --write \"**/*.{js,css,html,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,css,html,json,md}\""
+  },
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "prettier": "^3.6.2",
+    "vite": "^7.1.5",
+    "vitest": "^3.2.4"
+  }
+}

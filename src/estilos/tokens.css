@@ -1,0 +1,64 @@
+/**
+ * Tokens de diseño.
+ * Dirección visual: lujo oscuro editorial — negro cálido, oro con temperatura
+ * y una única tipografía con carácter para el discurso romántico.
+ */
+
+:root {
+  /* Color */
+  --negro-profundo: oklch(12% 0.012 60);
+  --negro-calido: oklch(16% 0.02 62);
+  --oro-luz: oklch(96% 0.05 92);
+  --oro-claro: oklch(90% 0.12 90);
+  --oro: oklch(82% 0.16 84);
+  --oro-medio: oklch(72% 0.17 76);
+  --oro-profundo: oklch(58% 0.15 68);
+  --ambar-sombra: oklch(45% 0.12 62);
+  --crema: oklch(94% 0.02 85);
+
+  --superficie-tarjeta: oklch(18% 0.028 62 / 0.86);
+  --superficie-velo: oklch(10% 0.02 60 / 0.72);
+  --borde-oro: oklch(78% 0.15 82 / 0.55);
+  --borde-tenue: oklch(70% 0.1 80 / 0.22);
+
+  /* Tipografía */
+  --fuente-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --fuente-interfaz: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --texto-titulo: clamp(1.5rem, 0.9rem + 2.6vw, 3.5rem);
+  --texto-tarjeta: clamp(1.3rem, 0.95rem + 1.2vw, 2rem);
+  --texto-intro: clamp(1.15rem, 0.9rem + 0.9vw, 1.7rem);
+  --texto-base: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
+  --texto-pista: clamp(0.62rem, 0.55rem + 0.25vw, 0.78rem);
+
+  /* Ritmo */
+  --espacio-xs: 0.4rem;
+  --espacio-s: 0.75rem;
+  --espacio-m: 1.25rem;
+  --espacio-l: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+  --espacio-xl: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+
+  --radio-s: 0.7rem;
+  --radio-m: 1.1rem;
+  --radio-l: 1.6rem;
+  --radio-pildora: 999px;
+
+  /* Movimiento */
+  --duracion-rapida: 160ms;
+  --duracion-normal: 320ms;
+  --duracion-lenta: 780ms;
+  --salida-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --suave: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Capas */
+  --capa-lienzo: 0;
+  --capa-atmosfera: 5;
+  --capa-interfaz: 10;
+  --capa-destello: 20;
+  --capa-portada: 30;
+
+  /* Sombras y resplandores */
+  --brillo-oro: 0 0 28px oklch(80% 0.16 82 / 0.45);
+  --brillo-oro-fuerte: 0 0 46px oklch(84% 0.17 84 / 0.6);
+  --sombra-tarjeta: 0 30px 70px -30px oklch(0% 0 0 / 0.9), 0 0 60px -20px oklch(70% 0.15 78 / 0.35);
+}

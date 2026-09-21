@@ -1,0 +1,411 @@
+/* Capa de interfaz: título, portada, tarjeta de recuerdo y botones. */
+
+/**
+ * Velo inferior: la galaxia llega hasta abajo y el título necesita una base
+ * sobre la que apoyarse. Es un degradado, no una barra: no se percibe como
+ * una caja, solo hace que el texto gane contraste.
+ */
+.escenario::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42vh;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    oklch(6% 0.012 60 / 0.92) 0%,
+    oklch(6% 0.012 60 / 0.7) 32%,
+    oklch(6% 0.012 60 / 0.28) 62%,
+    transparent 100%
+  );
+}
+
+.escenario {
+  position: fixed;
+  inset: 0;
+  z-index: var(--capa-interfaz);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--espacio-m);
+  padding: var(--espacio-l);
+  padding-bottom: calc(var(--espacio-l) + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  text-align: center;
+}
+
+.titulo {
+  position: relative; /* por encima del velo inferior */
+  margin: 0;
+  max-width: 22ch;
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: var(--texto-titulo);
+  line-height: 1.12;
+  letter-spacing: 0.005em;
+  background: linear-gradient(180deg, var(--oro-luz) 0%, var(--oro) 55%, var(--oro-profundo) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 22px oklch(80% 0.16 82 / 0.45));
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 1.2s var(--salida-expo),
+    transform 1.2s var(--salida-expo);
+}
+
+.pista {
+  position: relative;
+  margin: 0;
+  font-size: var(--texto-pista);
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: oklch(82% 0.08 84 / 0.65);
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 1.2s var(--salida-expo) 0.25s,
+    transform 1.2s var(--salida-expo) 0.25s;
+}
+
+.titulo.visible,
+.pista.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/**
+ * Recorrido con teclado.
+ * Las esferas 3D no son alcanzables con el tabulador, así que esta lista es su
+ * equivalente accesible: está oculta hasta que recibe el foco y entonces se
+ * despliega como un panel real en la esquina.
+ */
+.lista-accesible {
+  position: fixed;
+  top: calc(var(--espacio-m) + env(safe-area-inset-top, 0px));
+  left: var(--espacio-m);
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  list-style: none;
+  text-align: left;
+}
+
+.lista-accesible:focus-within {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  width: min(82vw, 20rem);
+  height: auto;
+  padding: var(--espacio-s);
+  overflow: visible;
+  clip-path: none;
+  border-radius: var(--radio-m);
+  border: 1px solid var(--borde-tenue);
+  background: var(--superficie-velo);
+  backdrop-filter: blur(8px);
+}
+
+.lista-accesible button {
+  width: 100%;
+  padding: 0.5rem 0.9rem;
+  text-align: left;
+  font-family: var(--fuente-interfaz);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--oro-claro);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radio-s);
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    background-color var(--duracion-rapida) var(--suave),
+    border-color var(--duracion-rapida) var(--suave);
+}
+
+.lista-accesible button:hover,
+.lista-accesible button:focus-visible {
+  background: oklch(80% 0.14 82 / 0.14);
+  border-color: var(--borde-oro);
+}
+
+/* --- Botones -------------------------------------------------------------- */
+
+.boton {
+  pointer-events: auto;
+  font-family: var(--fuente-interfaz);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition:
+    transform var(--duracion-rapida) var(--suave),
+    box-shadow var(--duracion-normal) var(--suave),
+    background-color var(--duracion-normal) var(--suave),
+    color var(--duracion-normal) var(--suave);
+}
+
+.boton:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.boton--principal {
+  padding: 0.85rem 2.2rem;
+  border: 0;
+  color: oklch(22% 0.05 62);
+  background: linear-gradient(145deg, var(--oro-luz) 0%, var(--oro) 45%, var(--oro-medio) 100%);
+  box-shadow:
+    inset 0 1px 0 oklch(99% 0.03 95 / 0.7),
+    0 12px 30px -12px oklch(70% 0.16 78 / 0.8),
+    var(--brillo-oro);
+}
+
+.boton--principal:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 oklch(99% 0.03 95 / 0.8),
+    0 18px 38px -14px oklch(72% 0.17 78 / 0.9),
+    var(--brillo-oro-fuerte);
+}
+
+.boton--contorno {
+  padding: 0.6rem 1.9rem;
+  color: var(--oro-claro);
+  background: transparent;
+  border: 1px solid var(--borde-oro);
+}
+
+.boton--contorno:hover {
+  color: oklch(24% 0.05 62);
+  background: var(--oro);
+  border-color: var(--oro);
+  box-shadow: var(--brillo-oro);
+}
+
+/* --- Portada -------------------------------------------------------------- */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: var(--capa-portada);
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-m);
+  background: radial-gradient(
+    80% 60% at 50% 50%,
+    oklch(14% 0.03 62 / 0.55) 0%,
+    oklch(6% 0.015 60 / 0.88) 100%
+  );
+  backdrop-filter: blur(3px);
+  transition: opacity var(--duracion-lenta) var(--suave);
+}
+
+.intro--oculta {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro__tarjeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-m);
+  width: min(92vw, 30rem);
+  padding: clamp(1.5rem, 1rem + 3vw, 2.6rem);
+  border-radius: var(--radio-l);
+  border: 1px solid var(--borde-tenue);
+  background: linear-gradient(
+    165deg,
+    oklch(20% 0.035 66 / 0.92) 0%,
+    oklch(12% 0.02 60 / 0.95) 100%
+  );
+  box-shadow: var(--sombra-tarjeta);
+  animation: entrar-suave 900ms var(--salida-expo) both;
+}
+
+.intro__imagen {
+  width: min(58vw, 15rem);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radio-m);
+  background: oklch(97% 0.01 90);
+  box-shadow:
+    0 0 0 1px var(--borde-oro),
+    var(--brillo-oro-fuerte);
+}
+
+.intro__texto {
+  margin: 0;
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--texto-intro);
+  line-height: 1.3;
+  color: var(--oro-claro);
+  text-shadow: 0 0 26px oklch(80% 0.15 82 / 0.5);
+  text-wrap: balance;
+}
+
+/* --- Tarjeta de recuerdo -------------------------------------------------- */
+
+.tarjeta {
+  width: min(92vw, 29rem);
+  max-height: 92dvh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--crema);
+  overflow: visible;
+}
+
+.tarjeta::backdrop {
+  background: oklch(5% 0.01 60 / 0.74);
+  backdrop-filter: blur(7px);
+}
+
+.tarjeta__marco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-m);
+  padding: clamp(1.25rem, 0.9rem + 2.4vw, 2rem);
+  border-radius: var(--radio-l);
+  border: 1px solid var(--borde-oro);
+  background: linear-gradient(168deg, oklch(21% 0.04 68 / 0.95) 0%, oklch(11% 0.02 60 / 0.97) 100%);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.tarjeta__imagen {
+  width: min(72%, 17rem);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radio-m);
+  background: oklch(97% 0.01 90);
+  box-shadow:
+    0 0 0 1px var(--borde-oro),
+    var(--brillo-oro);
+}
+
+.tarjeta__titulo {
+  margin: 0;
+  font-family: var(--fuente-interfaz);
+  font-size: var(--texto-pista);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: oklch(80% 0.09 84 / 0.7);
+}
+
+.tarjeta__mensaje {
+  margin: 0;
+  min-height: 3.2em;
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--texto-tarjeta);
+  line-height: 1.35;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--oro-claro);
+  text-shadow: 0 0 24px oklch(80% 0.15 82 / 0.45);
+}
+
+/* Cursor de máquina de escribir mientras el mensaje se va revelando. */
+.tarjeta__mensaje.escribiendo::after {
+  content: '|';
+  margin-left: 0.06em;
+  color: var(--oro);
+  animation: parpadeo 900ms steps(1, end) infinite;
+}
+
+/* --- Alternativa sin WebGL ------------------------------------------------ */
+
+.alternativa {
+  position: relative;
+  z-index: var(--capa-portada);
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: var(--espacio-xl) var(--espacio-l);
+  text-align: center;
+}
+
+.alternativa h2 {
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-size: var(--texto-titulo);
+  color: var(--oro-claro);
+}
+
+.alternativa ul {
+  padding: 0;
+  list-style: none;
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-size: var(--texto-intro);
+  color: var(--oro);
+}
+
+.alternativa li + li {
+  margin-top: var(--espacio-s);
+}
+
+body.sin-webgl {
+  overflow: auto;
+}
+
+@keyframes entrar-suave {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes parpadeo {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* En pantallas pequeñas el título compite con la galaxia: se aligera. */
+@media (max-width: 480px) {
+  .escenario {
+    gap: var(--espacio-s);
+    padding: var(--espacio-m);
+    padding-bottom: calc(var(--espacio-m) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .pista {
+    letter-spacing: 0.16em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__tarjeta {
+    animation: none;
+  }
+
+  .tarjeta__mensaje.escribiendo::after {
+    animation: none;
+    opacity: 0;
+  }
+}
