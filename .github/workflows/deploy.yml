@@ -26,7 +26,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run format:check
+
+      # El formato es un aviso, no una barrera: una coma que falte en un
+      # mensaje escrito a mano no debe impedir que el regalo se publique.
+      # Para arreglarlo en local: npm run format
+      - name: Revisar formato (no bloquea)
+        continue-on-error: true
+        run: npm run format:check
+
+      # Esto si bloquea: comprueba que cada foto y cada cancion existen.
       - run: npm test
 
   compilar:

@@ -12,6 +12,8 @@ export function crearInterfaz({ persona, recuerdos, alElegirRecuerdo }) {
 
   if (titulo) titulo.textContent = persona.titulo;
   if (pista) pista.textContent = persona.pista;
+  // La pestana del navegador tambien: si no, dice un nombre y la pagina otro.
+  document.title = persona.titulo;
 
   const botones = new Map();
   if (lista) {

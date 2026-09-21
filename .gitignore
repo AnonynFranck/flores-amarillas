@@ -12,3 +12,7 @@ blob-report/
 
 # Originales sin comprimir: pesan mucho y de ellos salen los de public/
 medios-originales/
+
+# Notas de trabajo con Claude Code: utiles en local, no forman parte del proyecto
+.claude/
+CLAUDE.md

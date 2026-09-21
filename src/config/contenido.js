@@ -136,7 +136,8 @@ export const RECUERDOS = [
     imagen: 'imagenes/orbes/15.jpg',
     foto: 'imagenes/fotos/15.jpg',
     titulo: 'Comida y serie',
-    mensaje: 'Comida, una serie y tú: mi plan perfecto no ha cambiado, ahora me spoileas tmr. Pero lo vi con vos miamol ❤️',
+    mensaje:
+      'Comida, una serie y tú: mi plan perfecto no ha cambiado, ahora me spoileas tmr. Pero lo vi con vos miamol ❤️',
   },
   {
     id: 'siesta',
@@ -217,7 +218,11 @@ export const RECUERDOS = [
   },
 ];
 
-/** Frases que flotan por el universo. Entre 10 y 16 se ven bien. */
+/**
+ * Frases que flotan por el universo.
+ * Se muestran por tandas, asi que puedes poner todas las que quieras: nunca
+ * hay mas de un punado en pantalla a la vez.
+ */
 export const FRASES = [
   'Eres espectacular',
   'Siempre contigo',
@@ -255,7 +260,7 @@ export const FRASES = [
   'No dejo de pensar en vos <3',
   'Siempre te tengo en mente',
   'Vos y mi nne ❤️',
-  'chii ❤️'
+  'chii ❤️',
 ];
 
 /**
