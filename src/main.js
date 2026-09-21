@@ -222,6 +222,26 @@ function iniciar() {
     remedioActual += 1;
   }
 
+  // --- Muestreo del lienzo ---------------------------------------------------
+  // Sin preserveDrawingBuffer (lo normal, por rendimiento) el contenido del
+  // lienzo WebGL solo se puede leer dentro del mismo cuadro en que se dibujo.
+  // Por eso la muestra se toma aqui y no desde fuera.
+  let peticionDeMuestra = null;
+
+  function brilloMedioDelLienzo() {
+    const reducido = document.createElement('canvas');
+    reducido.width = 160;
+    reducido.height = 100;
+    const contexto = reducido.getContext('2d');
+    contexto.drawImage(lienzo, 0, 0, reducido.width, reducido.height);
+    const { data } = contexto.getImageData(0, 0, reducido.width, reducido.height);
+    let suma = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      suma += (data[i] + data[i + 1] + data[i + 2]) / 3;
+    }
+    return suma / (data.length / 4);
+  }
+
   // --- Bucle de animacion ----------------------------------------------------
   const reloj = new Clock();
   let tiempo = 0;
@@ -261,6 +281,13 @@ function iniciar() {
     interfaz.establecerDestello(estado.destello);
 
     postproceso.dibujar();
+
+    if (peticionDeMuestra) {
+      const responder = peticionDeMuestra;
+      peticionDeMuestra = null;
+      responder(brilloMedioDelLienzo());
+    }
+
     vigilarRendimiento(delta);
   }
   dibujar();
@@ -314,6 +341,12 @@ function iniciar() {
     },
     get entradaTerminada() {
       return entradaTerminada;
+    },
+    /** Brillo medio del ultimo cuadro: sirve para comprobar que se dibujo algo. */
+    brilloDelLienzo() {
+      return new Promise((resolver) => {
+        peticionDeMuestra = resolver;
+      });
     },
   };
 }

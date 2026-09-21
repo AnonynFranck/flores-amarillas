@@ -15,21 +15,34 @@ const ALTURA_TEXTO = 0.92;
 const ZONA_TITULO = { desdeY: -0.5, anchoX: 0.62 };
 
 const proyeccion = new Vector3();
+const proyeccionLateral = new Vector3();
+const derechaCamara = new Vector3();
 
 /**
- * Devuelve cuanto debe verse una frase segun invada o no la zona del titulo.
- * Sin esto las frases se cruzan con "Feliz dia de las flores amarillas" y el
- * mensaje principal deja de leerse.
+ * Devuelve cuanto debe verse una frase: se apaga si invade la zona del titulo
+ * o si se asoma por un lado de la pantalla.
+ *
+ * El calculo usa el ancho real del sprite, no solo su centro: una frase larga
+ * centrada dentro de la pantalla puede tener media palabra fuera, y una frase
+ * cortada por la mitad se lee como un error, no como profundidad.
+ *
+ * @param {import('three').Vector3} derecha eje horizontal de la camara
  */
-function libreDeTitulo(sprite, camara) {
+function visibilidadComoda(sprite, camara, derecha) {
   proyeccion.copy(sprite.position).project(camara);
-  if (proyeccion.z > 1) return 1; // detras de la camara: da igual
+  if (proyeccion.z > 1) return 0; // detras de la camara
 
-  // Se apaga al asomarse por los bordes, para no dejar palabras cortadas.
-  const borde = 1 - Math.min(1, Math.max(0, (Math.abs(proyeccion.x) - 0.74) / 0.22));
+  proyeccionLateral
+    .copy(sprite.position)
+    .addScaledVector(derecha, sprite.scale.x * 0.5)
+    .project(camara);
+  const semiancho = Math.abs(proyeccionLateral.x - proyeccion.x);
+  const extremo = Math.abs(proyeccion.x) + semiancho;
 
-  const dentroX = Math.abs(proyeccion.x) < ZONA_TITULO.anchoX;
-  if (!dentroX) return borde;
+  const borde = 1 - Math.min(1, Math.max(0, (extremo - 0.86) / 0.22));
+  if (borde <= 0) return 0;
+
+  if (Math.abs(proyeccion.x) >= ZONA_TITULO.anchoX) return borde;
   const invasion = (ZONA_TITULO.desdeY - proyeccion.y) / 0.35;
   return borde * (1 - Math.min(1, Math.max(0, invasion)));
 }
@@ -73,6 +86,16 @@ export function crearFrases(frases, { calidad } = {}) {
     grupo,
     sprites,
     actualizar(tiempo, camara) {
+      // Los umbrales de desvanecido son relativos a lo lejos que este la
+      // camara: con valores fijos, en movil (camara mas atras) se apagarian
+      // casi todas las frases.
+      const alcance = camara ? camara.position.length() : 36;
+      if (camara) derechaCamara.setFromMatrixColumn(camara.matrixWorld, 0);
+      const entraDesde = alcance * 0.26;
+      const entraHasta = alcance * 0.46;
+      const saleDesde = alcance * 1.5;
+      const saleHasta = alcance * 2.1;
+
       sprites.forEach((sprite) => {
         const datos = sprite.userData;
         const angulo = datos.angulo + tiempo * datos.velocidad;
@@ -85,10 +108,18 @@ export function crearFrases(frases, { calidad } = {}) {
         if (camara) {
           // Las frases muy lejanas o pegadas a la camara estorban: se atenuan.
           const distancia = sprite.position.distanceTo(camara.position);
-          const cerca = Math.min(1, Math.max(0, (distancia - 9) / 9));
-          const lejos = 1 - Math.min(1, Math.max(0, (distancia - 46) / 30));
+          const cerca = Math.min(
+            1,
+            Math.max(0, (distancia - entraDesde) / (entraHasta - entraDesde))
+          );
+          const lejos =
+            1 - Math.min(1, Math.max(0, (distancia - saleDesde) / (saleHasta - saleDesde)));
           sprite.material.opacity =
-            datos.opacidadBase * cerca * lejos * aparicion * libreDeTitulo(sprite, camara);
+            datos.opacidadBase *
+            cerca *
+            lejos *
+            aparicion *
+            visibilidadComoda(sprite, camara, derechaCamara);
         }
       });
     },

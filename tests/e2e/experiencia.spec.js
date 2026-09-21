@@ -30,20 +30,8 @@ test.describe('universo de flores amarillas', () => {
     await page.waitForTimeout(1_200);
 
     // Se mide el brillo medio del lienzo: si nada se dibujo, seria casi cero.
-    const brillo = await page.evaluate(() => {
-      const origen = document.querySelector('#lienzo');
-      const destino = document.createElement('canvas');
-      destino.width = 160;
-      destino.height = 100;
-      const ctx = destino.getContext('2d');
-      ctx.drawImage(origen, 0, 0, destino.width, destino.height);
-      const { data } = ctx.getImageData(0, 0, destino.width, destino.height);
-      let suma = 0;
-      for (let i = 0; i < data.length; i += 4) {
-        suma += (data[i] + data[i + 1] + data[i + 2]) / 3;
-      }
-      return suma / (data.length / 4);
-    });
+    // La muestra la toma la propia escena dentro de su cuadro de dibujo.
+    const brillo = await page.evaluate(() => window.__camara.brilloDelLienzo());
 
     expect(brillo).toBeGreaterThan(3);
   });

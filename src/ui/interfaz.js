@@ -27,9 +27,15 @@ export function crearInterfaz({ persona, recuerdos, alElegirRecuerdo }) {
     });
   }
 
+  let ultimoDestello = -1;
+
   return {
     establecerDestello(valor) {
-      if (destello) destello.style.opacity = String(valor);
+      // Se llama en cada cuadro pero solo cambia durante la entrada: escribir
+      // el estilo sin comprobar forzaria un recalculo continuo.
+      if (!destello || Math.abs(valor - ultimoDestello) < 0.002) return;
+      ultimoDestello = valor;
+      destello.style.opacity = String(valor);
     },
     revelar() {
       titulo?.classList.add('visible');

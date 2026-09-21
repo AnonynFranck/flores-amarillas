@@ -42,6 +42,7 @@ npm run preview    # sirve dist/ en http://localhost:4173
 npm test           # pruebas unitarias (Vitest)
 npm run test:e2e   # pruebas end to end (Playwright)
 npm run format     # Prettier
+npm run portada    # regenera la vista previa del enlace (public/portada.jpg)
 ```
 
 ---
@@ -120,6 +121,20 @@ no cuando lo abra ella.
 La URL será `https://TU-USUARIO.github.io/flores-amarillas/`. El proyecto usa
 rutas relativas (`base: './'`), así que funciona igual en un subdirectorio que
 en un dominio propio.
+
+### La vista previa al compartir el enlace
+
+`public/portada.jpg` es la imagen que se ve al pegar el enlace en WhatsApp o
+Telegram. Cuando cambies las fotos, regénerala con el sitio ya compilado:
+
+```bash
+npm run build
+npm run preview &
+npm run portada
+```
+
+Usa el navegador de verdad para fotografiar la galaxia, así que la vista previa
+siempre coincide con lo que ella va a ver.
 
 ---
 

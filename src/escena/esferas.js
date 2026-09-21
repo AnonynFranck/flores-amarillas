@@ -11,6 +11,8 @@ import { texturaAvatar } from '../lib/texturas.js';
 import { recurso } from '../lib/rutas.js';
 
 const ESCALA_BASE = 2.5;
+/** Cuanto crece una esfera al pasar el puntero por encima. */
+const RESALTE = 1.18;
 
 export function crearEsferas(recuerdos, { alDetectarFallo } = {}) {
   const grupo = new Group();
@@ -79,15 +81,14 @@ export function crearEsferas(recuerdos, { alDetectarFallo } = {}) {
     establecerEscalaBase(factor) {
       sprites.forEach((sprite) => {
         const datos = sprite.userData;
-        const resaltada = datos.escalaObjetivo > datos.escalaBase;
         datos.escalaBase = ESCALA_BASE * factor;
-        datos.escalaObjetivo = datos.escalaBase * (resaltada ? 1.18 : 1);
+        datos.escalaObjetivo = datos.escalaBase * (datos.resaltado ? RESALTE : 1);
       });
     },
     resaltar(sprite, activo) {
       if (!sprite) return;
       sprite.userData.resaltado = activo;
-      sprite.userData.escalaObjetivo = sprite.userData.escalaBase * (activo ? 1.18 : 1);
+      sprite.userData.escalaObjetivo = sprite.userData.escalaBase * (activo ? RESALTE : 1);
     },
     establecerAparicion(valor) {
       aparicion = valor;
